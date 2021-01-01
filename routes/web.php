@@ -11,14 +11,8 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Auth::routes();
-//Auth::routes(['register' => false]);
-
-Route::get('/home', 'HomeController@index')->name('home');
+//Auth::routes();
+Auth::routes(['register' => false]);
 
 Route::group([
         'as' => 'app.',
@@ -27,29 +21,16 @@ Route::group([
 
     Route::group([
         'as' => 'products.',
-        'prefix' => 'products'
+        'prefix' => '/'
     ], function() {
-        Route::get('/', 'ProductController@index');
+        Route::get('/', 'ProductController@index')->name('index');
+        Route::get('data', 'ProductController@data');
+        Route::get('{id}', 'ProductController@info');
+        Route::get('detail/{id}', 'ProductController@detail');
+        Route::post('command/{id}', 'ProductController@command');
+        Route::post('create', 'ProductController@create');
+        Route::post('update/{id}', 'ProductController@update');
+        Route::get('delete/{id}', 'ProductController@delete');
     });
 
-    Route::group([
-        'as' => 'imports.',
-        'prefix' => 'imports'
-    ], function() {
-        Route::get('/', 'ImportController@index');
-    });
-
-    Route::group([
-        'as' => 'exports.',
-        'prefix' => 'exports'
-    ], function() {
-        Route::get('/', 'ExportController@index');
-    });
-
-    Route::group([
-        'as' => 'returns.',
-        'prefix' => 'returns'
-    ], function() {
-        Route::get('/', 'ReturnController@index');
-    });
 });
