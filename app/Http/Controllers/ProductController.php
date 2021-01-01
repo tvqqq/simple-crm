@@ -33,7 +33,9 @@ class ProductController extends Controller
             ->sortByDesc('quantity')
             ->pluck('product_id')
             ->unique();
-        $listIds[] = $exportToday->toArray();
+        if (count($exportToday) > 0) {
+            $listIds[] = $exportToday->toArray();
+        }
         $countExportItem = $exportToday->count();
         if ($countExportItem < 30) {
             // Trong ngày, chưa có phiếu xuất -> sắp xếp theo tồn tăng dần
@@ -48,7 +50,9 @@ class ProductController extends Controller
         $listIds = Arr::flatten($listIds);
         $tempStr = implode(',', $listIds);
         $displayList = Product::whereIn('id', $listIds)
-            ->orderByRaw(DB::raw("FIELD(id, $tempStr)"))
+            ->when(!empty($tempStr), function ($q) use ($tempStr) {
+                return $q->orderByRaw(DB::raw("FIELD(id, $tempStr)"));
+            })
             ->get();
 
         $data = Product::all();
